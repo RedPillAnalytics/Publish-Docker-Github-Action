@@ -1,9 +1,33 @@
 #!/bin/sh -e
 
+echo "GITHUB_REF: $GITHUB_REF"
+echo "GITHUB_HEAD_REF: $GITHUB_HEAD_REF"
+echo "GITHUB_BASE_REF: $GITHUB_BASE_REF"
+echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+echo "GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME"
+
 function cleanEnvironment() {
   unset INPUT_SNAPSHOT
   unset INPUT_DOCKERFILE
   unset GITHUB_SHA
+}
+
+function itOpensPullRequest() {
+  export GITHUB_REF='refs/heads/master'
+  export GITHUB_HEAD_REF='develop'
+  export INPUT_USERNAME='USERNAME'
+  export INPUT_PASSWORD='PASSWORD'
+  export INPUT_NAME='my/repository'
+  local result=$(exec /entrypoint.sh)
+  local expected="Called mock with: login -u USERNAME -p PASSWORD
+Called mock with: build -t my/repository:develop .
+Called mock with: push my/repository:develop
+Called mock with: logout"
+  if [ "$result" != "$expected" ]; then
+    echo "Expected: $expected
+    Got: $result"
+    exit 1
+  fi
 }
 
 function itPushesMasterBranchToLatest() {

@@ -15,7 +15,8 @@ if [ -z "${INPUT_PASSWORD}" ]; then
   exit 1
 fi
 
-BRANCH=$(echo ${GITHUB_REF} | sed -e "s/refs\/heads\///g")
+# If a PR, then use the merging branch
+[[ "$GITHUB_HEAD_REF" ]] && BRANCH="${GITHUB_HEAD_REF}" || BRANCH=$(echo ${GITHUB_REF} | sed -e "s/refs\/heads\///g")
 
 if [ "${BRANCH}" == "master" ]; then
   BRANCH="latest"
