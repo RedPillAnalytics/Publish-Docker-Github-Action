@@ -7,7 +7,7 @@ jobs:
     - uses: actions/checkout@master
     - name: Publish to Registry
       # test the current commit in integration testing
-      uses: ${{ github.repository }}@${{ github.sha }}
+      uses: ${{ join( github.repository, '@', github.sha ) }}
       with:
         name: ${{ secrets.DOCKER_REPOSITORY }}
         # name: lgohr/publish-docker-github-action
