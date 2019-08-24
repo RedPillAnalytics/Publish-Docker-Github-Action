@@ -36,14 +36,18 @@ fi
 
 docker login -u ${INPUT_USERNAME} -p ${INPUT_PASSWORD} ${INPUT_REGISTRY}
 
-if [ "${INPUT_SNAPSHOT}" == "true" ]; then
-  SHA_DOCKER_NAME="${INPUT_NAME}:${GITHUB_SHA}"
-  docker build $CUSTOMDOCKERFILE -t ${DOCKERNAME} -t ${SHA_DOCKER_NAME} .
+# go ahead and build and create both tags. Doesn't cost anything
+SHA_DOCKER_NAME="${INPUT_NAME}:${GITHUB_SHA}"
+docker build $CUSTOMDOCKERFILE -t ${DOCKERNAME} -t ${SHA_DOCKER_NAME} .
+
+# push the non-SHA version if this is not a PR
+if [ -z "$GITHUB_HEAD_REF" ]; then
   docker push ${DOCKERNAME}
+fi
+
+# if either snapshot or a PR, then push the SHA version
+if [ "${INPUT_SNAPSHOT}" == "true" || "$GITHUB_HEAD_REF" ]; then
   docker push ${SHA_DOCKER_NAME}
-else
-  docker build $CUSTOMDOCKERFILE -t ${DOCKERNAME} .
-  docker push ${DOCKERNAME}
 fi
 
 docker logout
