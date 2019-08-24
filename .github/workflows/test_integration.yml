@@ -6,9 +6,11 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@master
+      # test the current commit in integration testing
+      uses: ${{ github.repository }}@${{ github.sha }}
       with:
-        name: lgohr/publish-docker-github-action
+        name: ${{ secrets.DOCKER_REPOSITORY }}
+        # name: lgohr/publish-docker-github-action
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         snapshot: true
