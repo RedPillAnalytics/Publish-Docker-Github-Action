@@ -46,7 +46,7 @@ if [ -z "$GITHUB_HEAD_REF" ]; then
 fi
 
 # if either snapshot or a PR, then push the SHA version
-if [ "${INPUT_SNAPSHOT}" == "true" || "$GITHUB_HEAD_REF" ]; then
+if [ "${INPUT_SNAPSHOT}" == "true" ] || ["$GITHUB_HEAD_REF" ]; then
   docker push ${SHA_DOCKER_NAME}
 fi
 
